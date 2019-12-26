@@ -4,7 +4,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "subroutines.h"
+#include "src/fortran/subroutines.h"
 
 int main(void)
 {

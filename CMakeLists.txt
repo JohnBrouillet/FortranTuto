@@ -4,10 +4,11 @@ project(fortranOCV)
 find_package(OpenCV REQUIRED)
 enable_language(Fortran)
 
-set(SOURCES
-	grayscale.f90
-	main.cpp
-	)
+file(GLOB_RECURSE SOURCES
+	"src/fortran/*.f90"
+    "src/Cpp/*.cpp"
+	"main.cpp"	
+)
 
 set(RESOURCES
 	lena.png)
