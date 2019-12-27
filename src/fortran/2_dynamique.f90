@@ -1,4 +1,4 @@
-Module utilsFunctions
+module utilsFunctions
     implicit none
     contains
     
