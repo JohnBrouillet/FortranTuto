@@ -1,10 +1,7 @@
 #include <iostream>
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-
 #include "src/fortran/subroutines.h"
+#include "src/Cpp/utils.h"
 
 int main(void)
 {
@@ -13,18 +10,23 @@ int main(void)
 	int W = img.cols;
 	int c = img.channels();
 
+	// Because fortran doesn't support uchar, we'll work in float.
 	cv::Mat imgFloat;
 	img.convertTo(imgFloat, CV_32FC3);
 
 	float* dataIMG = (float*)imgFloat.data;
 
-	float newDataSubRoutine[W*H] = {0.0};
-	s_grayscale_(dataIMG, &W, &H, &c, newDataSubRoutine);
-	cv::Mat graySubroutine(H, W, CV_32FC1, newDataSubRoutine);
-	graySubroutine.convertTo(graySubroutine, CV_8UC1);
+	float grayscale[W*H];
+	s_grayscale_(dataIMG, &W, &H, &c, grayscale);
 
-	cv::imshow("graySubroutine", graySubroutine);
-	cv::imshow("fen", img);
+	float stretch[W*H];
+	img_stretch_intensity_(grayscale, &W, &H, stretch);
+
+	ImgManager manager(W, H);
+	manager.show(grayscale, "grayscale");
+	manager.show(stretch, "stretch");
+
+	cv::imshow("picture", img);
 
 	cv::waitKey(0);
     return 0;
