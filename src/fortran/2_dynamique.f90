@@ -37,16 +37,36 @@ subroutine img_stretch_intensity(img_in, W, H, img_out)
 
     real :: min, max
     real, parameter :: a1 = 0, a2 = 255
+    real :: t1, t2
 
+    integer :: i
+
+    call cpu_time(t1)
     call v_compute_min_max(img_in, W*H, min, max)
-    ! intrinsic functions for the same result
-    ! min = minval(img_in)
-    ! max = maxval(img_in)
+ 
+    if(max /= min) then
+        do i=1,W*H
+            img_out(i) = a1 + (a2 - a1) / (max - min) * (img_in(i) - min)
+        end do
+    else
+        do i=1,W*H
+            img_out(i) = (a1 + a2) / 2.0
+        end do
+    end if
+    call cpu_time(t2)
+    print*, "Dynamic stretch, naive method : ", t2 - t1, "s"
+
+    call cpu_time(t1)
+    min = minval(img_in)
+    max = maxval(img_in)
 
     if(max /= min) then
         img_out = a1 + (a2 - a1) / (max - min) * (img_in - min)
     else
         img_out = (a1 + a2) / 2.0
     end if
+    call cpu_time(t2)
+    print*, "Dynamic stretch, full fortran method : ", t2 - t1, "s"
+
 end subroutine img_stretch_intensity
 
